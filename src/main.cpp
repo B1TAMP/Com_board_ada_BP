@@ -20,7 +20,7 @@ esp_now_peer_info_t peerInfo;
 AS5600 as5600;
 float angleOffset = 0;
 unsigned long last_send = 0;
-const unsigned long SEND_INTERVAL = 100; // 100ms - vzor 10x za sekundu
+const unsigned long SEND_INTERVAL = 20; // 100ms - vzor 10x za sekundu
 
 // ===== ESP-NOW Callbacks =====
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
@@ -103,10 +103,11 @@ void loop() {
   // Citaj senzor
   float rawAngle = as5600.readAngle() * AS5600_RAW_TO_DEGREES;
   float angle = rawAngle - angleOffset;
+
+
   
-  if (angle < 0) {
-    angle += 360;
-  }
+  if (angle < -180) angle += 360;
+  if (angle > 180)  angle -= 360;
   
   Serial.print("Uhol: ");
   Serial.print(angle, 2);
